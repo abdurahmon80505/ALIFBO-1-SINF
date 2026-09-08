@@ -5,7 +5,6 @@
 // ============================================================
 import { HARF_MAP, TARTIB_BOYICHA } from '../data/harflar.js';
 import { DARSLAR_SONI } from '../data/darslar.js';
-import * as db from './db.js';
 
 const KALIT = 'alifbo1sinf';
 const $ = s => document.querySelector(s);
@@ -21,7 +20,7 @@ const kunNomi = ['Yak', 'Du', 'Se', 'Cho', 'Pay', 'Ju', 'Sha'];
 
 function saqla() { try { localStorage.setItem(KALIT, JSON.stringify(P)); } catch (e) {} }
 
-async function chiz() {
+function chiz() {
   const ich = $('#ich');
   ich.innerHTML = '';
   $('#ism').textContent = P.ism || 'Oʻquvchi';
@@ -90,16 +89,6 @@ async function chiz() {
   }
   ich.appendChild(q);
 
-  // ---- Ovoz holati ----
-  await db.borlarniYukla();
-  const jamiOvoz = (await db.kalitlar()).filter(x => String(x).startsWith('h:')).length;
-  const o = el('div', 'karta');
-  o.innerHTML = `<div class="sarlavha">Ovoz 🎙️</div>
-    <div class="izoh">${jamiOvoz} / 30 ta harf tovushi yozilgan.
-    ${jamiOvoz < 30 ? 'Toʻliq yozilsa, bola har bir harfni sizning ovozingizda eshitadi.' : 'Hammasi tayyor ✅'}</div>
-    <div class="tugmalar"><button class="tugma" onclick="location.href='yozish.html'">Studiyani ochish</button></div>`;
-  ich.appendChild(o);
-
   // ---- Telegram ----
   const t = el('div', 'karta');
   t.innerHTML = `<div class="sarlavha">Telegram hisobot</div>
@@ -139,7 +128,7 @@ async function chiz() {
     '<b>Boʻgʻin — eng muhimi.</b> Bola harflarni bilsa ham qoʻsha olmasa, oʻqiy olmaydi. Har kuni boʻgʻin mashqini takrorlang.',
     '<b>Kuniga 10–15 daqiqa</b> — 1 soatlik mashgʻulotdan yaxshiroq. Har kuni bir vaqtda.',
     '<b>Xato qilsa tuzatmang darrov.</b> 3 soniya kutib turing — koʻpincha oʻzi tuzatadi.',
-    '<b>Ovoz studiyasida oʻz ovozingizni yozing.</b> Tanish ovoz bolani ancha tez oʻrgatadi.'
+    '<b>Telefon ovozini sozlang.</b> Sozlamalar → Talaffuz ovozi: ruscha yoki turkcha ovoz oʻzbekchaga eng yaqin chiqadi.'
   ].forEach(x => m.appendChild(el('div', 'maslahat', x)));
   ich.appendChild(m);
 }

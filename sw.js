@@ -2,12 +2,12 @@
 //  Service Worker — ilova internetsiz ishlashi uchun
 //  Barcha fayllar telefon xotirasiga saqlanadi.
 // ============================================================
-const KESH = 'alifbo-v1';
+const KESH = 'alifbo-v2';
 
 const FAYLLAR = [
-  './', 'index.html', 'yozish.html', 'ota-ona.html', 'manifest.webmanifest',
+  './', 'index.html', 'ota-ona.html', 'manifest.webmanifest',
   'css/style.css',
-  'js/app.js', 'js/ovoz.js', 'js/uz.js', 'js/db.js', 'js/yozish.js', 'js/ota-ona.js',
+  'js/app.js', 'js/ovoz.js', 'js/uz.js', 'js/ota-ona.js',
   'data/harflar.js', 'data/sozlar.js', 'data/gaplar.js', 'data/boginlar.js',
   'data/darslar.js', 'data/ovoz-vaqt.js',
   'audio/alifbo-qoshigi.m4a',

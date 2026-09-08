@@ -87,16 +87,6 @@ function korsatAlifbo() {
   salom.appendChild(qoshiqBtn);
   v.appendChild(salom);
 
-  if (!ovozTayyorMi()) {
-    const og = el('div', 'ogoh');
-    og.innerHTML = `🎙️ <b>Ovoz hali yozilmagan.</b> Studiyada oʻz ovozingizni yozsangiz,
-      bola tanish ovozni eshitadi va tezroq oʻrganadi — 30 ta harf, 5 daqiqa.
-      <div class="tugmalar" style="margin-top:10px">
-        <button class="tugma" onclick="location.href='yozish.html'">Studiyani ochish →</button>
-      </div>`;
-    v.appendChild(og);
-  }
-
   BOSQICHLAR.forEach(b => {
     const sarlavha = el('div', 'bosqich-nom');
     sarlavha.innerHTML = `<i style="background:${b.rang}"></i>${b.nom}<small>${b.izoh}</small>`;
@@ -607,15 +597,59 @@ function qoshiqIjro() {
   if (qoshiq.paused) { qoshiq.play().catch(() => {}); } else { qoshiq.pause(); qoshiq.currentTime = 0; }
 }
 
-// Studiyada birorta ovoz yozilganmi?
-let ovozHolat = false;
-function ovozTayyorMi() { return ovozHolat; }
+// ---------- Koʻrinish (yorugʻ / qorongʻi) ----------
+const MAVZU_KALIT = 'alifboMavzu';
+
+function mavzuQoy(m) {
+  if (m === 'avto') delete document.documentElement.dataset.mavzu;
+  else document.documentElement.dataset.mavzu = m;
+  try { localStorage.setItem(MAVZU_KALIT, m); } catch (e) {}
+  document.querySelectorAll('#mavzu button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
+  // telefon tepasidagi panel rangi ham moslashsin
+  const rang = getComputedStyle(document.body).backgroundColor;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta && rang) meta.setAttribute('content', rang);
+}
+
+function mavzuniYukla() {
+  let m = 'avto';
+  try { m = localStorage.getItem(MAVZU_KALIT) || 'avto'; } catch (e) {}
+  mavzuQoy(m);
+}
+document.querySelectorAll('#mavzu button').forEach(b => b.onclick = () => mavzuQoy(b.dataset.m));
+
+// ---------- Talaffuz ovozini tanlash ----------
+function ovozlarniChiz() {
+  const sel = $('#selOvoz');
+  if (!sel) return;
+  const royxat = ovoz.ovozlarRoyxati();
+  if (!royxat.length) {
+    sel.innerHTML = '<option>Ovoz topilmadi</option>';
+    $('#ovozIzoh').textContent = 'Telefoningizda sintez ovozi yoʻq. Android: Sozlamalar → Tillar → Matndan nutqqa.';
+    return;
+  }
+  let joriy = '';
+  try { joriy = localStorage.getItem('alifboOvozi') || ''; } catch (e) {}
+  sel.innerHTML = royxat.map(v =>
+    `<option value="${v.name}"${v.name === joriy ? ' selected' : ''}>${v.name} — ${v.lang}</option>`).join('');
+  const til = (royxat.find(v => v.name === (joriy || royxat[0].name)) || royxat[0]).lang;
+  $('#ovozIzoh').innerHTML = /^uz/i.test(til)
+    ? 'Oʻzbekcha ovoz topildi — eng yaxshisi. ✅'
+    : /^ru/i.test(til)
+      ? 'Ruscha ovoz: soʻzlar kirillga oʻgirilib oʻqiladi (<b>shakar → шакар</b>) — talaffuz oʻzbekchaga yaqin chiqadi.'
+      : /^tr/i.test(til)
+        ? 'Turkcha ovoz: soʻzlar turk imlosiga oʻgiriladi (<b>shakar → şakar</b>).'
+        : 'Bu til oʻzbekchaga uzoq. Roʻyxatdan <b>ruscha</b> yoki <b>turkcha</b> ovozni tanlang.';
+}
+if ($('#selOvoz')) {
+  $('#selOvoz').onchange = e => { ovoz.ovozTanla(e.target.value); ovozlarniChiz(); ovoz.sinov(); };
+}
+if ($('#btnSinov')) $('#btnSinov').onclick = () => ovoz.sinov();
+try { speechSynthesis.addEventListener('voiceschanged', ovozlarniChiz); } catch (e) {}
 
 // ---------- Ishga tushirish ----------
+mavzuniYukla();
 seriyaniYangila();
 yangilaTepa();
-ovoz.ovozlarniYukla()
-  .then(() => import('./db.js'))
-  .then(db => { ovozHolat = db.ovozBormi('h:a'); })
-  .catch(() => {})
-  .finally(() => tabOch('alifbo'));
+tabOch('alifbo');
+setTimeout(ovozlarniChiz, 300);

@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#FFF8F0">
 <title>Ota-ona paneli — Alifbo</title>
+<script>
+try {
+  var m = localStorage.getItem('alifboMavzu') || 'avto';
+  if (m !== 'avto') document.documentElement.dataset.mavzu = m;
+} catch (e) {}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.webmanifest">
@@ -26,9 +32,9 @@
     background:var(--fon);box-shadow:var(--soya);display:flex;align-items:baseline;gap:6px;
   }
   .hbelgi span{font-family:'Nunito';font-size:11.5px;font-weight:700;color:var(--matn2)}
-  .hbelgi.yomon{background:#FDE8E8;color:var(--xato)}
+  .hbelgi.yomon{background:var(--yomon-fon);color:var(--xato)}
   .hbelgi.yaxshi{background:var(--yashil-och);color:var(--yashil)}
-  .maslahat{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:14px;padding:12px 14px;
+  .maslahat{background:var(--maslahat-fon);border:1.5px solid var(--maslahat-chiziq);border-radius:14px;padding:12px 14px;
     font-size:13.5px;font-weight:600;line-height:1.6;margin-bottom:10px}
   .maslahat b{color:var(--kok)}
 </style>

@@ -39,9 +39,7 @@ data/
 js/
   uz.js           soʻzni harflarga ajratish (sh, ch, ng, oʻ, gʻ = 1 ta harf)
   ovoz.js         ovoz tizimi: MP3 sprite + zaxira brauzer ovozi
-  yozish.js       ovoz studiyasi
   ota-ona.js      ota-ona paneli
-  db.js           IndexedDB (yozilgan ovozlar)
 netlify/functions/
   report.mjs      ota-onaga Telegram orqali hisobot
   chatid.mjs      chat id ni topish uchun yordamchi
@@ -54,12 +52,24 @@ Shuning uchun bola hech qachon "hali oʻrganmagan harfi bor" soʻzga duch kelmay
 
 ## Ovoz
 
-Uch bosqichli tizim (ustuvorlik tartibida):
+Telefonlarda oʻzbekcha sintez ovozi deyarli yoʻq, lotin yozuvini ingliz
+ovoziga berish esa rasvo natija beradi. Shuning uchun **matn ovoz tiliga
+moslanadi**:
 
-1. **Oʻz ovozi** — `yozish.html` studiyasida telefon mikrofonidan yoziladi,
-   IndexedDB da saqlanadi. Bola tanish ovozni eshitadi, internet kerak emas.
-2. **MP3 sprite** — bitta fayl + har tovushga vaqt oraligʻi (quyida).
-3. **Brauzer ovozi** — zaxira (oʻzbek tili koʻp telefonlarda yoʻq).
+| Ovoz | Nima boʻladi | Misol |
+|---|---|---|
+| oʻzbekcha | oʻzgarmaydi | `shakar` |
+| ruscha | kirillga oʻgiriladi | `shakar → шакар`, `quyosh → куёш` |
+| turkcha | turk imlosiga | `shakar → şakar`, `xoʻroz → höroz` |
+
+Rus va turk tillari oʻzbek tovushlariga juda yaqin — natija tabiiy chiqadi.
+Ovozni sozlamalardan tanlash mumkin (roʻyxat + "Sinash" tugmasi).
+
+Choʻziladigan tovushlar uch marta takrorlanadi (`mmm`, `sss`), portlovchilarni
+(`b`, `d`, `k`…) yakka choʻzib boʻlmagani uchun `ba, ba, ba` shaklida beriladi.
+
+Bundan tashqari **MP3 sprite** ham qoʻllab-quvvatlanadi (quyida) — `data/ovoz-vaqt.js`
+toʻldirilsa, u avtomatik ustun turadi.
 
 `audio/alifbo-qoshigi.m4a` — alifbo qoʻshigʻi (bosh sahifadagi tugma).
 
@@ -94,11 +104,12 @@ python3 -m http.server 8000
 - [x] Interfeys: Alifbo / Dars / Boʻgʻin / Oʻyin
 - [x] Ovozni avtomatik kesish vositasi (`tools/kesish.py`)
 - [ ] MP3 fayllar (yozilishi kutilmoqda)
-- [x] Ovoz studiyasi (`yozish.html`) — oʻz ovozini yozish
+- [x] Talaffuz: kirill/turk transliteratsiyasi + ovoz tanlash
+- [x] Yorugʻ va qorongʻi rejim (avto / qoʻlda)
 - [x] Telegram hisobot funksiyalari (`/api/report`, `/api/chatid`)
 - [x] Ota-ona paneli (`ota-ona.html`): kunlik grafik, qiyin harflar, maslahatlar
 - [x] PWA — internetsiz ishlaydi, telefonga oʻrnatiladi
-- [ ] Netlify deploy (repo ulanishi kerak)
+- [x] Netlify: https://alifbo-1-sinf.netlify.app
 
 ## Netlify sozlamalari
 
