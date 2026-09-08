@@ -14,8 +14,14 @@ let tayyor = false;
 let raf = null, tmr = null;
 let joriyTugash = 0;
 
+// Sprite fayli hali yoʻq boʻlsa — bekorga 404 soʻramaymiz
+function spriteBormi() {
+  return Object.keys(HARF_VAQT).length + Object.keys(BOGIN_VAQT).length + Object.keys(SOZ_VAQT).length > 0;
+}
+
 export function ovozniTayyorla() {
   if (audio) return audio;
+  if (!spriteBormi()) return null;
   audio = new Audio(OVOZ_FAYL);
   audio.preload = 'auto';
   audio.playsInline = true;
@@ -27,6 +33,7 @@ export function unlock() {
   if (tayyor) return;
   tayyor = true;
   const a = ovozniTayyorla();
+  if (!a) return;
   try {
     a.load();
     a.muted = true;
@@ -49,6 +56,7 @@ export function toxtat() {
 function spriteIjro(vaqt) {
   return new Promise(resolve => {
     const a = ovozniTayyorla();
+    if (!a) { resolve(); return; }
     const [boshi, oxiri] = vaqt;
     joriyTugash = oxiri;
     toxtat();
