@@ -9,7 +9,15 @@ import { aralashtir, tasodifiy, kattalashtir, tokenla } from './uz.js';
 
 // ---------- PROGRESS (telefon xotirasida) ----------
 const KALIT = 'alifbo1sinf';
-const boshlangich = { dars: 1, yulduz: 0, korilgan: [], avto: true, ism: '', kunlar: {} };
+const boshlangich = {
+  dars: 1, yulduz: 0, korilgan: [], avto: true, ism: '',
+  kunlar: {},        // { '2026-09-08': 12.5 }  — kuniga necha daqiqa
+  xato: {},          // { 'q': 3 }  — qaysi harfda necha marta adashdi
+  togri: {},         // { 'q': 7 }
+  seriya: 0,         // ketma-ket necha kun oʻqidi
+  oxirgiKun: '',
+  avtoHisobot: true  // dars tugagach Telegramga yuborish
+};
 let P = yukla();
 
 function yukla() {
@@ -22,8 +30,23 @@ function saqla() {
 }
 function bugun() { return new Date().toISOString().slice(0, 10); }
 function kunQoshi(daqiqa = 1) {
-  P.kunlar[bugun()] = (P.kunlar[bugun()] || 0) + daqiqa;
+  P.kunlar[bugun()] = Math.round(((P.kunlar[bugun()] || 0) + daqiqa) * 10) / 10;
 }
+
+// Ketma-ket kunlar seriyasini yangilash
+function seriyaniYangila() {
+  const b = bugun();
+  if (P.oxirgiKun === b) return;
+  const kecha = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  P.seriya = (P.oxirgiKun === kecha) ? (P.seriya || 0) + 1 : 1;
+  P.oxirgiKun = b;
+  saqla();
+}
+
+// Har 30 soniyada yarim daqiqa qoʻshamiz (ilova ochiq va koʻrinib turgan boʻlsa)
+setInterval(() => {
+  if (document.visibilityState === 'visible') { kunQoshi(0.5); saqla(); }
+}, 30000);
 
 // ---------- YORDAMCHI ----------
 const $ = s => document.querySelector(s);
@@ -380,10 +403,11 @@ function qadamChiz(d, ich) {
   if (qadam === 'oyin') {
     ich.appendChild(testTuz(d.ochilgan, 5, () => {
       P.yulduz += 1;
+      const tugagan = P.dars;
       if (P.dars < DARSLAR_SONI) P.dars += 1;
       joriyQadam = 0;
-      kunQoshi(10);
       saqla();
+      if (P.avtoHisobot) hisobotYubor({ dars: tugagan, harf: yozuv(d.harf) });
       korsatDars();
     }));
   }
@@ -484,12 +508,15 @@ function testTuz(harfIdlar, soni, tugagachFn) {
         [...jav.children].forEach(c => c.dataset.done = '1');
         if (id === h.id) {
           b.classList.add('togri'); holat.togri++;
+          P.togri[h.id] = (P.togri[h.id] || 0) + 1;
           fikr.className = 'fikr ok'; fikr.textContent = 'Barakalla! ✅';
         } else {
           b.classList.add('notogri');
           [...jav.children].forEach(c => { if (c.dataset.harf === h.id) c.classList.add('togri'); });
+          P.xato[h.id] = (P.xato[h.id] || 0) + 1;
           fikr.className = 'fikr yoq'; fikr.textContent = 'Bu ' + yozuv(h) + ' edi';
         }
+        saqla();
         ovoz.harfOqi(h.id);
         setTimeout(() => { holat.n++; chiz(); }, 1100);
       };
@@ -552,6 +579,27 @@ $('#btnTozala').onclick = () => {
 };
 $('#parda').onclick = e => { if (e.target === $('#parda')) $('#btnYop').click(); };
 
+// ---------- Telegramga hisobot ----------
+export function hisobotYubor(qosh = {}) {
+  const qiyin = Object.entries(P.xato)
+    .filter(([id, n]) => n >= 2 && n > (P.togri[id] || 0))
+    .sort((a, b) => b[1] - a[1]).slice(0, 5)
+    .map(([id]) => HARF_MAP[id] ? yozuv(HARF_MAP[id]) : id);
+
+  return fetch('/api/report', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    keepalive: true,
+    body: JSON.stringify(Object.assign({
+      ism: P.ism || 'Oʻquvchi',
+      dars: P.dars,
+      yulduz: P.yulduz,
+      daqiqa: Math.round(P.kunlar[bugun()] || 0),
+      qiyin
+    }, qosh))
+  }).then(r => r.json()).catch(() => ({ ok: false }));
+}
+
 // ---------- Alifbo qoʻshigʻi ----------
 let qoshiq = null;
 function qoshiqIjro() {
@@ -564,6 +612,7 @@ let ovozHolat = false;
 function ovozTayyorMi() { return ovozHolat; }
 
 // ---------- Ishga tushirish ----------
+seriyaniYangila();
 yangilaTepa();
 ovoz.ovozlarniYukla()
   .then(() => import('./db.js'))

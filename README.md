@@ -40,10 +40,12 @@ js/
   uz.js           soʻzni harflarga ajratish (sh, ch, ng, oʻ, gʻ = 1 ta harf)
   ovoz.js         ovoz tizimi: MP3 sprite + zaxira brauzer ovozi
   yozish.js       ovoz studiyasi
+  ota-ona.js      ota-ona paneli
   db.js           IndexedDB (yozilgan ovozlar)
 netlify/functions/
-  report.js       ota-onaga Telegram orqali hisobot
-  chatid.js       chat id ni topish uchun yordamchi
+  report.mjs      ota-onaga Telegram orqali hisobot
+  chatid.mjs      chat id ni topish uchun yordamchi
+sw.js             offline rejim (service worker)
 ```
 
 **Asosiy g'oya:** dars maʼlumotlari qoʻlda yozilmaydi — `darsYasa(n)` funksiyasi
@@ -94,5 +96,17 @@ python3 -m http.server 8000
 - [ ] MP3 fayllar (yozilishi kutilmoqda)
 - [x] Ovoz studiyasi (`yozish.html`) — oʻz ovozini yozish
 - [x] Telegram hisobot funksiyalari (`/api/report`, `/api/chatid`)
-- [ ] Ota-ona paneli (statistika)
-- [ ] PWA (offline) + Netlify deploy
+- [x] Ota-ona paneli (`ota-ona.html`): kunlik grafik, qiyin harflar, maslahatlar
+- [x] PWA — internetsiz ishlaydi, telefonga oʻrnatiladi
+- [ ] Netlify deploy (repo ulanishi kerak)
+
+## Netlify sozlamalari
+
+Saytda ikkita muhit oʻzgaruvchisi kerak (kodga yozilmaydi):
+
+| Nom | Nima |
+|---|---|
+| `TG_TOKEN` | @BotFather bergan bot tokeni |
+| `TG_CHAT` | hisobot boradigan chat id (vergul bilan bir nechta) |
+
+Chat id ni bilmasangiz: botga `/start` yozing va `SAYT/api/chatid` ni oching.
