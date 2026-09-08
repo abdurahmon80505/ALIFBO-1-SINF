@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FFF8F0">
+<title>Alifbo — 1-sinf</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="logo">ALIFBO</div>
+    <div class="yulduzlar" id="yulduzlar">⭐ 0</div>
+    <button class="gear" id="btnSoz" title="Sozlamalar">⚙️</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="alifbo">Alifbo</button>
+    <button class="tab" data-tab="dars">Dars</button>
+    <button class="tab" data-tab="oyin">Oʻyin</button>
+  </div>
+
+  <!-- ============ ALIFBO ============ -->
+  <div id="v-alifbo" class="kirish"></div>
+
+  <!-- ============ DARS ============ -->
+  <div id="v-dars" class="hidden"></div>
+
+  <!-- ============ OʻYIN ============ -->
+  <div id="v-oyin" class="hidden"></div>
+
+</div>
+
+<!-- pastki tugmalar (dars ichida koʻrinadi) -->
+<div class="pastki hidden" id="pastki"><div class="ich" id="pastkiIch"></div></div>
+
+<!-- sozlamalar -->
+<div class="parda" id="parda">
+  <div class="varaq">
+    <h2>Sozlamalar</h2>
+    <p class="izoh" style="margin-bottom:10px">Bolaning ismini yozsangiz, ilova unga ism bilan murojaat qiladi.</p>
+    <div style="margin:10px 0 14px"><input type="text" id="inIsm" placeholder="Bolaning ismi" autocomplete="off"></div>
+    <div class="qator"><span>Avtomatik ovoz</span><button class="tugma oq" id="swAvto">Yoniq</button></div>
+    <div class="qator"><span>Hozirgi dars</span><b id="sozDars">1</b></div>
+    <div class="qator"><span>Yigʻilgan yulduz</span><b id="sozYulduz">0</b></div>
+    <div class="qator" style="border:none">
+      <button class="tugma oq" id="btnTozala" style="color:var(--xato)">Progressni tozalash</button>
+    </div>
+    <div class="tugmalar" style="margin-top:14px">
+      <button class="tugma" id="btnYop" style="flex:1;justify-content:center">Tayyor</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
