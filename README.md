@@ -56,7 +56,16 @@ HARF_VAQT = { 'a': [0.00, 0.95], 'b': [1.21, 2.13], ... }
 ```
 
 Afzalligi: bitta fayl tez yuklanadi, internetsiz ishlaydi, ovoz kechikmaydi.
-`audio/alifbo.mp3` kelgach `data/ovoz-vaqt.js` avtomatik toʻldiriladi.
+
+Vaqt jadvali **avtomatik** tuziladi — jimliklarga qarab kesiladi:
+
+```bash
+python3 tools/kesish.py audio/alifbo.mp3   harf
+python3 tools/kesish.py audio/boginlar.mp3 bogin
+python3 tools/kesish.py audio/sozlar.mp3   soz
+```
+
+Nima yozish kerakligi: [`audio/YOZISH-ROYXATI.md`](audio/YOZISH-ROYXATI.md)
 
 ## Ishga tushirish
 
@@ -68,7 +77,8 @@ python3 -m http.server 8000
 ## Holat
 
 - [x] Alifbo maʼlumotlari (30 harf, 103 soʻz, 20 gap, 30 dars)
-- [x] Ovoz tizimi (MP3 kutilmoqda)
-- [ ] Interfeys: Alifbo / Dars / Boʻgʻin / Oʻyin
+- [x] Interfeys: Alifbo / Dars / Boʻgʻin / Oʻyin
+- [x] Ovozni avtomatik kesish vositasi (`tools/kesish.py`)
+- [ ] MP3 fayllar (yozilishi kutilmoqda)
 - [ ] Ota-ona paneli + Telegram hisobot
 - [ ] PWA (offline)
