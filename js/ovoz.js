@@ -7,6 +7,7 @@
 //  ishga tushadi — shuning uchun "unlock" qilamiz.
 // ============================================================
 import { OVOZ_FAYL, HARF_VAQT, BOGIN_VAQT, SOZ_VAQT } from '../data/ovoz-vaqt.js';
+import * as db from './db.js';
 
 let audio = null;
 let tayyor = false;
@@ -114,19 +115,46 @@ function gapir(matn, tezlik = 0.75) {
   });
 }
 
+// ---- OʻZ OVOZI (studiyada yozilgan) ----
+// Ustuvorlik: 1) oʻz ovozi  2) MP3 sprite  3) brauzer ovozi
+const urlKesh = new Map();
+
+async function ozOvozi(kalit) {
+  if (!db.ovozBormi(kalit)) return false;
+  let url = urlKesh.get(kalit);
+  if (!url) {
+    const blob = await db.ovozOl(kalit);
+    if (!blob) return false;
+    url = URL.createObjectURL(blob);
+    urlKesh.set(kalit, url);
+  }
+  return new Promise(yech => {
+    const a = new Audio(url);
+    a.onended = () => yech(true);
+    a.onerror = () => yech(false);
+    a.play().catch(() => yech(false));
+    setTimeout(() => yech(true), 4000);
+  });
+}
+
+export async function ovozlarniYukla() { await db.borlarniYukla(); }
+
 // ---- TASHQARIGA CHIQADIGAN FUNKSIYALAR ----
 
-export function harfOqi(harfId) {
+export async function harfOqi(harfId) {
+  if (await ozOvozi('h:' + harfId)) return;
   if (HARF_VAQT[harfId]) return spriteIjro(HARF_VAQT[harfId]);
   return gapir(harfId, 0.7);
 }
 
-export function boginOqi(bogin) {
+export async function boginOqi(bogin) {
+  if (await ozOvozi('b:' + bogin)) return;
   if (BOGIN_VAQT[bogin]) return spriteIjro(BOGIN_VAQT[bogin]);
   return gapir(bogin, 0.7);
 }
 
-export function sozOqi(soz) {
+export async function sozOqi(soz) {
+  if (await ozOvozi('s:' + soz)) return;
   if (SOZ_VAQT[soz]) return spriteIjro(SOZ_VAQT[soz]);
   return gapir(soz, 0.8);
 }

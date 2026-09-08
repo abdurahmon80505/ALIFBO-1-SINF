@@ -39,8 +39,11 @@ data/
 js/
   uz.js           soʻzni harflarga ajratish (sh, ch, ng, oʻ, gʻ = 1 ta harf)
   ovoz.js         ovoz tizimi: MP3 sprite + zaxira brauzer ovozi
+  yozish.js       ovoz studiyasi
+  db.js           IndexedDB (yozilgan ovozlar)
 netlify/functions/
   report.js       ota-onaga Telegram orqali hisobot
+  chatid.js       chat id ni topish uchun yordamchi
 ```
 
 **Asosiy g'oya:** dars maʼlumotlari qoʻlda yozilmaydi — `darsYasa(n)` funksiyasi
@@ -49,7 +52,16 @@ Shuning uchun bola hech qachon "hali oʻrganmagan harfi bor" soʻzga duch kelmay
 
 ## Ovoz
 
-Arab harflari saytidagi tizim: **bitta MP3 fayl** + har tovushga vaqt oraligʻi.
+Uch bosqichli tizim (ustuvorlik tartibida):
+
+1. **Oʻz ovozi** — `yozish.html` studiyasida telefon mikrofonidan yoziladi,
+   IndexedDB da saqlanadi. Bola tanish ovozni eshitadi, internet kerak emas.
+2. **MP3 sprite** — bitta fayl + har tovushga vaqt oraligʻi (quyida).
+3. **Brauzer ovozi** — zaxira (oʻzbek tili koʻp telefonlarda yoʻq).
+
+`audio/alifbo-qoshigi.m4a` — alifbo qoʻshigʻi (bosh sahifadagi tugma).
+
+### MP3 sprite
 
 ```js
 HARF_VAQT = { 'a': [0.00, 0.95], 'b': [1.21, 2.13], ... }
@@ -80,5 +92,7 @@ python3 -m http.server 8000
 - [x] Interfeys: Alifbo / Dars / Boʻgʻin / Oʻyin
 - [x] Ovozni avtomatik kesish vositasi (`tools/kesish.py`)
 - [ ] MP3 fayllar (yozilishi kutilmoqda)
-- [ ] Ota-ona paneli + Telegram hisobot
-- [ ] PWA (offline)
+- [x] Ovoz studiyasi (`yozish.html`) — oʻz ovozini yozish
+- [x] Telegram hisobot funksiyalari (`/api/report`, `/api/chatid`)
+- [ ] Ota-ona paneli (statistika)
+- [ ] PWA (offline) + Netlify deploy

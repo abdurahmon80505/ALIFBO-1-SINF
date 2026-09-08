@@ -57,7 +57,22 @@ function korsatAlifbo() {
     <div class="sarlavha">${P.ism ? 'Salom, ' + P.ism + '! 👋' : 'Oʻzbek alifbosi 🇺🇿'}</div>
     <div class="izoh">29 ta harf va tutuq belgisi. Harfni bosing — uning
     <b>tovushini</b> eshitasiz va u bilan boshlanadigan soʻzlarni koʻrasiz.</div>`;
+  const qoshiqBtn = el('div', 'tugmalar');
+  const bQ = el('button', 'tugma', '🎵 Alifbo qoʻshigʻi');
+  bQ.onclick = qoshiqIjro;
+  qoshiqBtn.appendChild(bQ);
+  salom.appendChild(qoshiqBtn);
   v.appendChild(salom);
+
+  if (!ovozTayyorMi()) {
+    const og = el('div', 'ogoh');
+    og.innerHTML = `🎙️ <b>Ovoz hali yozilmagan.</b> Studiyada oʻz ovozingizni yozsangiz,
+      bola tanish ovozni eshitadi va tezroq oʻrganadi — 30 ta harf, 5 daqiqa.
+      <div class="tugmalar" style="margin-top:10px">
+        <button class="tugma" onclick="location.href='yozish.html'">Studiyani ochish →</button>
+      </div>`;
+    v.appendChild(og);
+  }
 
   BOSQICHLAR.forEach(b => {
     const sarlavha = el('div', 'bosqich-nom');
@@ -537,6 +552,21 @@ $('#btnTozala').onclick = () => {
 };
 $('#parda').onclick = e => { if (e.target === $('#parda')) $('#btnYop').click(); };
 
+// ---------- Alifbo qoʻshigʻi ----------
+let qoshiq = null;
+function qoshiqIjro() {
+  if (!qoshiq) qoshiq = new Audio('audio/alifbo-qoshigi.m4a');
+  if (qoshiq.paused) { qoshiq.play().catch(() => {}); } else { qoshiq.pause(); qoshiq.currentTime = 0; }
+}
+
+// Studiyada birorta ovoz yozilganmi?
+let ovozHolat = false;
+function ovozTayyorMi() { return ovozHolat; }
+
 // ---------- Ishga tushirish ----------
 yangilaTepa();
-tabOch('alifbo');
+ovoz.ovozlarniYukla()
+  .then(() => import('./db.js'))
+  .then(db => { ovozHolat = db.ovozBormi('h:a'); })
+  .catch(() => {})
+  .finally(() => tabOch('alifbo'));
